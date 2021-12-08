@@ -10,7 +10,7 @@
     restart_policy: "{{ container_restart_policy }}"
     links: "{{ container_links | default(omit) }}"
     networks: "{{ container_network | default(omit, True) }}"
-    networks_cli_compatible: no # avoid ansible 2.12. Deprecation warning
+    networks_cli_compatible: no
     published_ports: "{{ container_ports | default(omit, True) }}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -21,17 +21,19 @@
 #   debug:
 #     msg: "{{ portainer_docker.container }}"
 
-- set_fact:
+- name: Check Protainer container running
+  ansible.builtin.set_fact:
     portainer_is_running: "{{ portainer_docker.container.State.Running }}"
 
-- set_fact:
+- name: Get Protnainer IP address endpoint
+  ansible.builtin.set_fact:
     portainer_endpoint: "http://{{ portainer_docker.container.NetworkSettings.IPAddress }}:{{ host_port }}/api"
 
 - name: "Check!!!"
-  debug:
+  ansible.builtin.debug:
     msg: "{{ portainer_is_running }} // {{ portainer_endpoint }}"
 
 - name: Check container status
-  fail:
+  ansible.builtin.fail:
     msg: "Portainer did not start: {{ portainer_is_running }}"
   when: not portainer_is_running

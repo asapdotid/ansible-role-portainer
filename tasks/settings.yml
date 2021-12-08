@@ -3,7 +3,7 @@
 #     msg: "{{ lookup('template', 'settings.json.j2') }}"
 
 - name: Configure Portainer settings
-  uri:
+  ansible.builtin.uri:
     url: "{{ portainer_endpoint }}/settings"
     method: PUT
     return_content: true
